@@ -11,13 +11,24 @@ const WHATSAPP_LINK = "https://chat.whatsapp.com/HqjcH2GgzL9Hqy666R0HDc";
 
 // --- Components ---
 
-const Section = ({ children, className = "" }: { children: React.ReactNode, className?: string }) => (
+interface SectionProps {
+  children: React.ReactNode;
+  className?: string;
+}
+
+const Section: React.FC<SectionProps> = ({ children, className = "" }) => (
   <section className={`py-20 md:py-28 px-6 md:px-12 max-w-7xl mx-auto relative z-10 ${className}`}>
     {children}
   </section>
 );
 
-const GoldButton = ({ children, className = "", onClick }: { children: React.ReactNode, className?: string, onClick?: () => void }) => {
+interface GoldButtonProps {
+  children: React.ReactNode;
+  className?: string;
+  onClick?: () => void;
+}
+
+const GoldButton: React.FC<GoldButtonProps> = ({ children, className = "", onClick }) => {
   if (onClick) {
     return (
       <button 
@@ -81,7 +92,7 @@ interface BonusCardProps {
   delay: number;
 }
 
-const BonusCard = ({ title, sub, icon: Icon, delay }: BonusCardProps) => {
+const BonusCard: React.FC<BonusCardProps> = ({ title, sub, icon: Icon, delay }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -113,7 +124,13 @@ const BonusCard = ({ title, sub, icon: Icon, delay }: BonusCardProps) => {
 
 // --- Page Components ---
 
-const PageLayout = ({ title, children, onBack }: { title: string, children: React.ReactNode, onBack: () => void }) => (
+interface PageLayoutProps {
+  title: string;
+  children: React.ReactNode;
+  onBack: () => void;
+}
+
+const PageLayout: React.FC<PageLayoutProps> = ({ title, children, onBack }) => (
   <div className="min-h-screen bg-[#050511] font-sans text-slate-100 overflow-x-hidden selection:bg-purple-500/30 selection:text-amber-200 py-12 px-4 md:px-8">
     <div className="fixed inset-0 pointer-events-none z-0">
        <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-[#1e1b4b] via-[#0f0c29] to-[#02020a]"></div>
@@ -387,8 +404,10 @@ export default function App() {
           ].map((bonus, i) => (
             <BonusCard 
               key={i} 
-              {...bonus} 
-              delay={1000 + (i * 200)} // Staggered loading simulation
+              title={bonus.title}
+              sub={bonus.sub}
+              icon={bonus.icon}
+              delay={1000 + (i * 200)}
             />
           ))}
         </div>
