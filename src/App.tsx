@@ -4,7 +4,8 @@ import {
   Users, Zap, MessageCircle, 
   ChevronDown, ChevronUp,
   Feather, Sun, ArrowLeft, PlayCircle,
-  Gem, Loader2, Moon, ArrowRight, Shield, FileText
+  Gem, Loader2, Moon, ArrowRight, Shield, FileText,
+  Infinity
 } from 'lucide-react';
 
 const WHATSAPP_LINK = "https://chat.whatsapp.com/HqjcH2GgzL9Hqy666R0HDc";
@@ -83,6 +84,8 @@ interface BonusCardProps {
 
 const BonusCard = ({ title, sub, icon: Icon, delay }: BonusCardProps) => {
   const [loading, setLoading] = useState(true);
+  const [clickCount, setClickCount] = useState(0);
+  const [isSecretRevealed, setIsSecretRevealed] = useState(false);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -91,12 +94,45 @@ const BonusCard = ({ title, sub, icon: Icon, delay }: BonusCardProps) => {
     return () => clearTimeout(timer);
   }, [delay]);
 
+  const handleInteraction = () => {
+    if (loading || isSecretRevealed) return;
+    
+    const newCount = clickCount + 1;
+    setClickCount(newCount);
+    
+    if (newCount === 5) {
+      setIsSecretRevealed(true);
+      // Optional: Reset after 5 seconds
+      setTimeout(() => {
+        setIsSecretRevealed(false);
+        setClickCount(0);
+      }, 5000);
+    }
+  };
+
   return (
-    <div className="bg-white/5 backdrop-blur-md border border-white/10 p-8 rounded-2xl flex flex-col items-center text-center hover:bg-white/10 hover:border-amber-500/30 hover:shadow-[0_0_25px_rgba(124,58,237,0.2)] transition-all duration-500 h-full justify-center min-h-[200px]">
+    <div 
+      onClick={handleInteraction}
+      className={`
+        relative p-8 rounded-2xl flex flex-col items-center text-center transition-all duration-500 h-full justify-center min-h-[200px] select-none cursor-pointer
+        ${isSecretRevealed 
+          ? 'bg-gradient-to-br from-indigo-600 via-purple-600 to-amber-500 border-2 border-amber-300 shadow-[0_0_40px_rgba(245,158,11,0.5)] transform scale-105' 
+          : 'bg-white/5 backdrop-blur-md border border-white/10 hover:bg-white/10 hover:border-amber-500/30 hover:shadow-[0_0_25px_rgba(124,58,237,0.2)]'
+        }
+      `}
+    >
       {loading ? (
         <div className="flex flex-col items-center gap-3 animate-pulse">
           <Loader2 className="w-8 h-8 text-purple-400 animate-spin" />
           <span className="text-xs text-purple-300/70">טוען בונוס...</span>
+        </div>
+      ) : isSecretRevealed ? (
+        <div className="animate-fade-in-up">
+          <div className="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center mb-5 text-white mx-auto animate-spin">
+            <Infinity className="w-10 h-10" />
+          </div>
+          <h3 className="font-bold text-xl text-white mb-2">מסר מהיקום</h3>
+          <p className="text-amber-100 font-medium">התדר שלך גבוה היום! ✨</p>
         </div>
       ) : (
         <div className="animate-fade-in-up">
